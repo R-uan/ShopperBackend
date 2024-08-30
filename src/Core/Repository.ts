@@ -46,7 +46,7 @@ export default class Repository {
 		const formattedMonth = String(nowMonth).padStart(2, "0");
 		const startDate = new Date(`${nowYear}-${formattedMonth}-01T00:00:00.000Z`);
 
-		const endDate = new Date(`${nowMonth < 12 ? `${nowYear}-${String(nowMonth + 1).padStart(2, "0")}` : `${nowYear + 1}-${1}`}-01T00:00:00.000Z`);
+		const endDate = new Date(`${nowMonth < 12 ? `${nowYear}-${String(nowMonth + 1).padStart(2, "0")}` : `${nowYear + 1}-01`}-01T00:00:00.000Z`);
 
 		return await dbContext.measures.findFirst({
 			where: {

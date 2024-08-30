@@ -7,11 +7,11 @@ export function VaidateUploadRequest(body: IUploadRequestBody) {
 	let violations: string[] = [];
 
 	if (!image) {
-		violations.push("Image was not provided. Please provide an image in the base64 format.");
+		violations.push("Image was not provided. Please provide an image in the base64 format");
 	}
 
 	if (!ImageService.validateImage(image)) {
-		violations.push("Could not validate image as base64.");
+		violations.push("Could not validate image as base64");
 	}
 
 	if (!measure_type) {
@@ -21,13 +21,13 @@ export function VaidateUploadRequest(body: IUploadRequestBody) {
 	}
 
 	if (!customer_code) {
-		violations.push("Costumer Code was not provided.");
+		violations.push("Costumer Code was not provided");
 	}
 
 	if (!measure_datetime) {
 		violations.push("Measure DateTime was not provided");
 	} else if (isNaN(new Date(measure_datetime).getTime())) {
-		violations.push("Measure DateTime is not a valida date.");
+		violations.push("Measure DateTime is not a valid date");
 	}
 
 	if (violations.length > 0) {
