@@ -13,16 +13,12 @@ export class ImageService {
 		return { filePath: filePath, fileName: fileName };
 	}
 
-	public static DeleteTempFile(path: string) {
-		fs.rmSync(path);
-	}
-
 	public static validateImage(data: string) {
-		const base64Regex = /^data:image\/(png|jpeg|jpg|gif);base64,/;
-		if (!base64Regex.test(data)) return false;
-		const base64Data = data.replace(base64Regex, "");
-		if (!isBase64(base64Data)) return false;
 		try {
+			const base64Regex = /^data:image\/(png|jpeg|jpg|gif);base64,/;
+			if (!base64Regex.test(data)) return false;
+			const base64Data = data.replace(base64Regex, "");
+			if (!isBase64(base64Data)) return false;
 			return Buffer.from(base64Data, "base64").length > 0;
 		} catch (error) {
 			return false;

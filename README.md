@@ -1,4 +1,4 @@
-# Upload endpoint
+# Upload endpoint (/upload)
 
 ## Request Body
 
@@ -41,7 +41,7 @@
 }
 ```
 
-# Confirm endpoint
+# Confirm endpoint (/confirm)
 
 ## Request Body
 
@@ -89,7 +89,7 @@
 }
 ```
 
-# Customer List endpoint
+# Customer List endpoint (/{customer_code}/list)
 
 ## Possible responses
 
@@ -116,5 +116,16 @@
 {
   error_code: "MEASURES_NOT_FOUND",
   error_description: "Nenhuma leitura encontrada"
+}
+```
+
+### 400 Bad Request (/{customer_code}/list?measure_type=type)
+
+_Measure Type only accepts "GAS" or "WATER" (case insensitive)_
+
+```typescript
+{
+  error_code: "INVALID_TYPE",
+  error_description: "Tipo de medição não permitida"
 }
 ```

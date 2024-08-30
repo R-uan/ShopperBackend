@@ -4,7 +4,21 @@ import IMeasure from "../Interfaces/IMeasure";
 const dbContext = new PrismaClient();
 
 export default class Repository {
-	public static async GetCustomerMeasurements(customerCode: string) {
+	public static async GetCustomerMeasurements(customerCode: string, query?: string) {
+		if (query) {
+			query = query.toUpperCase();
+			return await dbContext.measures.findMany({
+				where: { customer_code: customerCode, measure_type: query },
+				select: {
+					measure_uuid: true,
+					measure_datetime: true,
+					measure_type: true,
+					has_confirmed: true,
+					image_url: true,
+				},
+			});
+		}
+
 		return await dbContext.measures.findMany({
 			where: { customer_code: customerCode },
 			select: {
@@ -26,8 +40,6 @@ export default class Repository {
 	}
 
 	public static async CheckMonthMeasure(customer_code: string, measure_type: string, measure_datetime: Date) {
-		console.log("CheckMonthMeasure");
-
 		const now = new Date(measure_datetime);
 		const nowYear = now.getFullYear();
 		const nowMonth = now.getMonth() + 1;
@@ -35,9 +47,6 @@ export default class Repository {
 		const startDate = new Date(`${nowYear}-${formattedMonth}-01T00:00:00.000Z`);
 
 		const endDate = new Date(`${nowMonth < 12 ? `${nowYear}-${String(nowMonth + 1).padStart(2, "0")}` : `${nowYear + 1}-${1}`}-01T00:00:00.000Z`);
-
-		console.log(`start date ${startDate}`);
-		console.log(`end date ${endDate}`);
 
 		return await dbContext.measures.findFirst({
 			where: {
@@ -61,10 +70,7 @@ export default class Repository {
 
 		return update.measure_value == measure_value && update.has_confirmed == true;
 	}
-
 	public static async StoreMeasure(measure: IMeasure) {
-		console.log("StoreMeasure");
-		console.log(measure);
 		const { has_confirmed, image_url, measure_datetime, measure_type, customer_code, measure_value } = measure;
 		return await dbContext.$transaction(async (prisma: any) => {
 			if (!(await this.FindCustomer(customer_code))) {

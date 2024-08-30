@@ -50,9 +50,10 @@ export default class Service {
 		else throw new Error("Could not update the report. But it's there.");
 	}
 
-	public static async GetCustomerMeasures(cusomer_code: string) {
-		const list = await Repository.GetCustomerMeasurements(cusomer_code);
+	public static async GetCustomerMeasures(cusomer_code: string, query?: string) {
+		const list = await Repository.GetCustomerMeasurements(cusomer_code, query);
 		if (list.length == 0) return null;
+
 		return {
 			cusomer_code,
 			measures: list,
