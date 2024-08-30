@@ -5,21 +5,23 @@ import IMeasure from "../Interfaces/IMeasure";
 import IConfirmRequestBody from "../Interfaces/Requests/IConfirmRequestBody";
 import { IUploadRequestBody } from "../Interfaces/Requests/IUploadRequestBody";
 import { GeminiService } from "../Services/GeminiService";
+import { ImageService } from "../Services/ImageService";
 import Repository from "./Repository";
 
 export default class Service {
 	public static async Upload(body: IUploadRequestBody) {
-		const test = await Repository.CheckMonthMeasure(body.customer_code, body.measure_type, body.measure_datetime);
-		console.log("test: " + test);
-		if (test) {
+		const { customer_code, image, measure_datetime, measure_type } = body;
+		if (await Repository.CheckMonthMeasure(customer_code, measure_type, measure_datetime)) {
 			throw new DoubleReportException();
 		}
 
-		const { value, image_url } = await GeminiService.ExtractValue(body);
+		const { fileName, filePath } = ImageService.CreateImageFile(image);
+		const value = await GeminiService.ExtractValue(filePath);
 		if (!value) throw new Error("Gemini could not read the value");
+		const imageUrl = `http://localhost:3000/images/${fileName}`;
 
 		const measure: IMeasure = {
-			image_url: image_url,
+			image_url: imageUrl,
 			measure_value: value,
 			has_confirmed: false,
 			measure_datetime: new Date(body.measure_datetime),

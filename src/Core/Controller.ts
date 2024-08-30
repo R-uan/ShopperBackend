@@ -16,6 +16,7 @@ export default class Controller {
 		try {
 			const body = req.body as IUploadRequestBody;
 			VaidateUploadRequest(body);
+			const appUrl = `${req.protocol}://${req.hostname}/`;
 			const value = await Service.Upload(body);
 			res.status(200).json(value);
 		} catch (error) {

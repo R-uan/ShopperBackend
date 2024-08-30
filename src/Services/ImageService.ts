@@ -1,23 +1,16 @@
 import fs from "fs";
 import path from "path";
 var isBase64 = require("is-base64");
-import { IUploadRequestBody } from "../Interfaces/Requests/IUploadRequestBody";
 
 export class ImageService {
-	public static CreateTempFile(request: IUploadRequestBody) {
-		console.log("CreateTempFile");
-
-		const { customer_code, image, measure_datetime, measure_type } = request;
-
+	public static CreateImageFile(image: string) {
+		const imagesPath = path.resolve(__dirname, "../../images/");
 		const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
 		const buffer = Buffer.from(base64Data, "base64");
-		const fileName = `${customer_code}+${measure_type}`;
-		const tempFilePath = path.join(__dirname, `${fileName}.png`);
-		console.log("Before Writing File");
-		fs.writeFileSync(tempFilePath, buffer);
-		console.log("After Writing File");
-
-		return tempFilePath;
+		const fileName = `${new Date().getTime()}.png`;
+		const filePath = path.join(imagesPath, fileName);
+		fs.writeFileSync(filePath, buffer);
+		return { filePath: filePath, fileName: fileName };
 	}
 
 	public static DeleteTempFile(path: string) {

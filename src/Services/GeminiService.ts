@@ -1,8 +1,6 @@
-import dotnet from "dotenv";
-import { ImageService } from "./ImageService";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { IUploadRequestBody } from "../Interfaces/Requests/IUploadRequestBody";
 import { GoogleAIFileManager, UploadFileResponse } from "@google/generative-ai/server";
+import dotnet from "dotenv";
 dotnet.config();
 
 const API_KEY = process.env.GEMINI_API_KEY;
@@ -11,22 +9,20 @@ const fileManager = new GoogleAIFileManager(API_KEY);
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 export class GeminiService {
-	public static async ExtractValue(upload: IUploadRequestBody) {
+	public static async ExtractValue(filePath: string) {
 		console.log("ExtractValue");
-		const uploadResponse = await this.UploadImage(upload);
+		const uploadResponse = await this.UploadImage(filePath);
 		const imageContent = await this.GenerateContent(uploadResponse);
-		return { image_url: uploadResponse.file.uri, value: imageContent };
+		return imageContent;
 	}
 
-	public static async UploadImage(upload: IUploadRequestBody) {
+	public static async UploadImage(filePath: string) {
 		console.log("UploadImage");
-		const filePath = ImageService.CreateTempFile(upload);
 		const uploadResponse = await fileManager.uploadFile(filePath, {
 			mimeType: "image/png",
 			displayName: `${filePath.split(".")[0]}`,
 		});
 
-		ImageService.DeleteTempFile(filePath);
 		return uploadResponse;
 	}
 
