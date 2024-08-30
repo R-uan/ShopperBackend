@@ -1,0 +1,22 @@
+services:
+    api:
+        build: .
+        container_name: ruan-api
+        ports:
+            - "3000:3000"
+        depends_on:
+            - database
+        command: ["sh", "-c", "npx prisma migrate deploy && npm start"]
+
+    database:
+        image: postgres:latest
+        container_name: ruan-database
+        restart: unless-stopped
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_DB: shopper
+            POSTGRES_USER: ruan
+            POSTGRES_PASSWORD: password
+        volumes:
+            - ./data:/var/lib/shopper-r-uan/postgresql/data
